@@ -1,6 +1,7 @@
 <?php 
 session_start();
-$domain = $_SESSION['HTTP_HOST'];
+ob_start();
+$domain = $_SERVER['HTTP_HOST'];
 require_once 'vendor/autoload.php';
 if(!function_exists('login_user')){
     function login_user($data){

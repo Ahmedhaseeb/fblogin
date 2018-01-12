@@ -14,13 +14,14 @@ if(isset($_GET['logout'])){
 
 $fb = new Facebook\Facebook([
   'app_id' => 'APP_ID_HERE',
-  'app_secret' => 'APP_SECRET_CODE_HERE',
-  'default_graph_version' => 'v2.7',
+  'app_secret' => 'APP_SECRET_HERE',
+  'default_graph_version' => 'v2.7'
   ]);
 
 $helper = $fb->getRedirectLoginHelper();
 $url= "http://".$domain.'/fblogin/fb-callback.php';
-$login_url = $helper->getLoginUrl($url);
+$permissions = ['email'];
+$login_url = $helper->getLoginUrl($url,$permissions);
 
 ?>
 <!DOCTYPE html>
@@ -46,23 +47,6 @@ $login_url = $helper->getLoginUrl($url);
 		</a>
 	</div>
 	<?php else: $user = $_SESSION['akpk_session']; ?>
-	<?php
-
-	try {
-		$url = "https://graph.facebook.com/v2.11/me/friends?access_token=".$_SESSION['access_token'];
-		$ch = curl_init();
-		curl_setopt ($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		$result = curl_exec ($ch);
-		curl_close ($ch);
-		$data =  json_decode($result,true);
-	  } catch(Exception $e) {
-	    	echo $e->getMessage();
-	    exit;
-	  }
-	?>
 		<div id="detailsBox">
 			<img src="<?php echo $user['__profile_pic']; ?>" alt="User Profile Picture" />
 			<img src="<?php echo $user['__cover']; ?>" alt="User Cover Photo" />
@@ -75,7 +59,6 @@ $login_url = $helper->getLoginUrl($url);
 			<h3>Email: <?php echo $user['__email']; ?></h3>
 			<h3>Age Above: <?php echo $user['__age']; ?></h3>
 			<h3>Gender: <?php echo $user['__gender']; ?></h3>
-			<h3>Total Friends: <?php echo $data['summary']['total_count']; ?></h3>
 		</div >
 		<a href="?logout=1">Logout</a>
 	<?php endif; ?>
